@@ -4,7 +4,7 @@
 
 ## About
 
-Level Values And Cosmetics Scanner is a simple quality-of-life mod for R.E.P.O.
+Level Values And Cosmetics Scanner is a simple and  useful mod for R.E.P.O.
 
 It keeps a small counter on your HUD so you can quickly see how much valuable loot is still left outside the extraction zone and how many items are still out there.
 
