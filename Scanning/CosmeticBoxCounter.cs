@@ -15,14 +15,8 @@ public sealed class CosmeticBoxCounter
         _nextRefreshTime = 0f;
     }
 
-    public BoxRaritySnapshot Read(bool enabled, bool force = false)
+    public BoxRaritySnapshot Read(bool force = false)
     {
-        if (!enabled)
-        {
-            _latest = BoxRaritySnapshot.Empty;
-            return _latest;
-        }
-
         if (!force && Time.unscaledTime < _nextRefreshTime)
             return _latest;
 

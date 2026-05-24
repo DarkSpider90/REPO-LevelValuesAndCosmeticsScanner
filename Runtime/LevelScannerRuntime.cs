@@ -34,10 +34,9 @@ public sealed class LevelScannerRuntime : MonoBehaviour
         }
 
         var hudRequested = ModSettings.AlwaysOn.Value || IsMapVisible();
-        var boxesEnabled = ModSettings.EnableCosmeticBoxScanning.Value && ModSettings.ShowCosmeticBoxes.Value;
 
         var valuables = _valuableScanner.Read();
-        var boxes = _cosmeticCounter.Read(boxesEnabled);
+        var boxes = ReadCosmeticBoxes();
 
         if (GameFieldReader.ExtractionIsFinished(RoundDirector.instance) || !hudRequested || NothingToShow(valuables, boxes))
         {
@@ -48,7 +47,7 @@ public sealed class LevelScannerRuntime : MonoBehaviour
         HudOverlay.Instance.Show(
             BuildValueText(valuables),
             boxes,
-            boxesEnabled,
+            ModSettings.ShowCosmeticBoxes.Value,
             ModSettings.UIPosition.Value
         );
     }
@@ -62,7 +61,8 @@ public sealed class LevelScannerRuntime : MonoBehaviour
         _valuableScanner.Reset();
         _cosmeticCounter.Reset();
         _valuableScanner.Read(force: true);
-        _cosmeticCounter.Read(ModSettings.EnableCosmeticBoxScanning.Value, force: true);
+        if (ModSettings.ShowCosmeticBoxes.Value)
+            _cosmeticCounter.Read(force: true);
         ModEntryPoint.Log.LogDebug("Level scan session started.");
     }
 
@@ -97,6 +97,15 @@ public sealed class LevelScannerRuntime : MonoBehaviour
     private static bool NothingToShow(LevelValuablesSnapshot valuables, BoxRaritySnapshot boxes)
     {
         return !valuables.HasLooseItems && !boxes.HasAny;
+    }
+
+    private BoxRaritySnapshot ReadCosmeticBoxes()
+    {
+        if (ModSettings.ShowCosmeticBoxes.Value)
+            return _cosmeticCounter.Read();
+
+        _cosmeticCounter.Reset();
+        return BoxRaritySnapshot.Empty;
     }
 
     private static string BuildValueText(LevelValuablesSnapshot valuables)

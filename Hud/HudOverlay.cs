@@ -30,7 +30,7 @@ public sealed class HudOverlay
     public void Show(
         string valueText,
         BoxRaritySnapshot boxes,
-        bool boxesEnabled,
+        bool showBoxes,
         HudAnchor anchor
     )
     {
@@ -39,7 +39,7 @@ public sealed class HudOverlay
 
         ApplyPosition(anchor);
         RefreshVanillaFont();
-        UpdateBoxRows(boxes, boxesEnabled);
+        UpdateBoxRows(boxes, showBoxes);
         UpdateValueText(valueText);
         _root.SetActive(true);
     }
@@ -109,21 +109,21 @@ public sealed class HudOverlay
         _valueText.SetText(text);
     }
 
-    private void UpdateBoxRows(BoxRaritySnapshot boxes, bool boxesEnabled)
+    private void UpdateBoxRows(BoxRaritySnapshot boxes, bool showBoxes)
     {
-        var visibleCount = VisibleRarityCount(boxes, boxesEnabled);
+        var visibleCount = VisibleRarityCount(boxes, showBoxes);
         var rowIndex = 0;
 
-        rowIndex = PlaceRarityLine(SemiFunc.Rarity.Common, boxes.Common, boxesEnabled, visibleCount, rowIndex);
-        rowIndex = PlaceRarityLine(SemiFunc.Rarity.Uncommon, boxes.Uncommon, boxesEnabled, visibleCount, rowIndex);
-        rowIndex = PlaceRarityLine(SemiFunc.Rarity.Rare, boxes.Rare, boxesEnabled, visibleCount, rowIndex);
-        PlaceRarityLine(SemiFunc.Rarity.UltraRare, boxes.UltraRare, boxesEnabled, visibleCount, rowIndex);
+        rowIndex = PlaceRarityLine(SemiFunc.Rarity.Common, boxes.Common, showBoxes, visibleCount, rowIndex);
+        rowIndex = PlaceRarityLine(SemiFunc.Rarity.Uncommon, boxes.Uncommon, showBoxes, visibleCount, rowIndex);
+        rowIndex = PlaceRarityLine(SemiFunc.Rarity.Rare, boxes.Rare, showBoxes, visibleCount, rowIndex);
+        PlaceRarityLine(SemiFunc.Rarity.UltraRare, boxes.UltraRare, showBoxes, visibleCount, rowIndex);
     }
 
-    private int PlaceRarityLine(SemiFunc.Rarity rarity, int count, bool boxesEnabled, int visibleCount, int rowIndex)
+    private int PlaceRarityLine(SemiFunc.Rarity rarity, int count, bool showBoxes, int visibleCount, int rowIndex)
     {
         var line = _rarityLines[rarity];
-        var visible = boxesEnabled && count > 0;
+        var visible = showBoxes && count > 0;
 
         line.Root.SetActive(visible);
         if (!visible)
@@ -136,9 +136,9 @@ public sealed class HudOverlay
         return rowIndex + 1;
     }
 
-    private static int VisibleRarityCount(BoxRaritySnapshot boxes, bool boxesEnabled)
+    private static int VisibleRarityCount(BoxRaritySnapshot boxes, bool showBoxes)
     {
-        if (!boxesEnabled)
+        if (!showBoxes)
             return 0;
 
         var count = 0;
